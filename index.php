@@ -13,43 +13,43 @@
     <body>
 
         <?php
-        if(isset($_GET['ToDoname'])&&""!=$_GET['ToDoname']){
-          $ToDoname = $_GET['ToDoname'];
+        if(isset($_GET['message'])&&""!=$_GET['message']){//データ追加部分
+          $message = $_GET['message'];
 
-          $ToDoname = htmlspecialchars($ToDoname,ENT_QUOTES);
+          $message = htmlspecialchars($message,ENT_QUOTES);
 
 
-        $dsn = 'mysql:dbname=todolist;host=localhost;charset=utf8';
+        $dsn ='mysql:dbname=board;host=localhost;charset=utf8';
         $user = 'root';
         $password = '';
         try {
           $dsn = new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-
-          //$dbn->query('SET NAMES utf8');
-
-          $sql = 'INSERT INTO list (item) VALUES(:ToDoname)';
+          $date=date('Y年m月d日');
+          $sql = 'INSERT INTO log (username,sdate,message) VALUES(:username,:sdate,:message)';
           $stmt = $dsn->prepare($sql);
-          $stmt->bindParam(':ToDoname',$ToDoname);
+          $stmt->bindParam(':username',$username);
+          $stmt->bindParam(':sdate',$sdate);
+          $stmt->bindParam(':message',$message);
           $stmt->execute();
 
           $dsn=NULL;
         } catch (Exception $e) {
           print('データの追加に失敗しました<br>');
         }
-      }else if(isset($_GET['delete'])){
+      }else if(isset($_GET['delete'])){//デリート部分
         $deleteNo = $_GET['delete'];
 
         $deleteNo = htmlspecialchars($deleteNo,ENT_QUOTES);
 
 
-      $dsn = 'mysql:dbname=todolist;host=localhost;charset=utf8';
+      $dsn ='mysql:dbname=board;host=localhost;charset=utf8';
       $user = 'root';
       $password = '';
       try {
         $dsn = new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
         //$dbn->query('SET NAMES utf8');
 
-        $sql = 'DELETE FROM  list WHERE id = :delete';
+        $sql = 'DELETE FROM  log WHERE id = :delete';
         $stmt = $dsn->prepare($sql);
         $stmt->bindParam(':delete',$deleteNo);
         $stmt->execute();
@@ -65,10 +65,10 @@
           <form  action="index.php" method="get">
             <h2>掲示板</h2>
             <div align="right">
-            <a href="" >ログアウト</a></br>
+            <a href="login.php" >ログアウト</a></br>
             </div>
             <?php
-            $dsn ='mysql:dbname=todolist;host=localhost;charset=utf8';
+            $dsn ='mysql:dbname=board;host=localhost;charset=utf8';// ユーザー名表示
             $user='root';
             $password ='';
             try {
@@ -78,32 +78,36 @@
               $sql = 'SELECT * FROM list';
               $stmt = $dsn->prepare($sql);
               $stmt->execute();
-              $task = $stmt->fetch(PDO::FETCH_ASSOC);
-                echo''.$task['id'].'<br>';
+              if(isset($_GET['username'])&&""!=$_GET['username']){
+              $username = $_GET['username'];
+
+              $username = htmlspecialchars($username,ENT_QUOTES);
+
+                echo'<label id="'.$username.'" name="'.$username.'">'.$username.'<br>';
+              }
             } catch (Exception $ex) {
               print('データの追加に失敗しました<br>');
             }
             $dsn=NULL;
             ?>
-          <input type="text" id="ToDoname" name="ToDoname" style="float:left">
+          <input type="text" id="message" name="message" style="float:left">
           <input type="submit" name="add" value="add"><br>
 
           <?php
-          $dsn ='mysql:dbname=todolist;host=localhost;charset=utf8';
+          $dsn ='mysql:dbname=board;host=localhost;charset=utf8';//項目の表示
           $user='root';
           $password ='';
           try {
             $dsn= new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
 
-            //$dbn->query('SET NAMES utf8')
-            $sql = 'SELECT * FROM list';
+            $sql = 'SELECT * FROM log';
             $stmt = $dsn->prepare($sql);
             $stmt->execute();
             while($task = $stmt->fetch(PDO::FETCH_ASSOC)) {
-              echo'<div class="log" style="float:left">'.$task['id'].'  '.date('Y年m月d日').'</div>';
+              echo'<div class="log" style="float:left">'.$task['username'].'  '.date('Y年m月d日').'</div>';
               echo'<form method="get" class="log" action="index.php" >';
               echo'<input type="image" class="log" src="./gomibako.png" alt="削除ボタン" width="20" height="20" name="delete" value="'.$task['id'].'"><br>';
-              echo'<label class="log" style="float:left">'.$task['item'].'</label></br>';
+              echo'<label class="log" style="float:left">'.$task['message'].'</label></br>';
               echo'</form></br>';
 
             }
