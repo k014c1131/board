@@ -17,14 +17,22 @@
           $message = $_GET['message'];
 
           $message = htmlspecialchars($message,ENT_QUOTES);
+          if(isset($_GET['username'])&&""!=$_GET['username']){
+          $username = $_GET['username'];
 
+          $username = htmlspecialchars($username,ENT_QUOTES);
+        }else{
+          $username = "名無し";
+
+          $username = htmlspecialchars($username,ENT_QUOTES);
+        }
 
         $dsn ='mysql:dbname=board;host=localhost;charset=utf8';
         $user = 'root';
         $password = '';
         try {
           $dsn = new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-          $date=date('Y年m月d日');
+          $sdate=''.date('Y年m月d日');
           $sql = 'INSERT INTO log (username,sdate,message) VALUES(:username,:sdate,:message)';
           $stmt = $dsn->prepare($sql);
           $stmt->bindParam(':username',$username);
@@ -71,6 +79,7 @@
             $dsn ='mysql:dbname=board;host=localhost;charset=utf8';// ユーザー名表示
             $user='root';
             $password ='';
+
             try {
               $dsn= new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
 
@@ -83,13 +92,15 @@
 
               $username = htmlspecialchars($username,ENT_QUOTES);
 
-              echo'<label id="'.$username.'" name="'.$username.'">'.$username.'さん<br>';
+              echo'<label >'.$username.'</label>さん<br>';
+              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
             }else{
               $username = "名無し";
 
               $username = htmlspecialchars($username,ENT_QUOTES);
 
-              echo'<label id="'.$username.'" name="'.$username.'">'.$username.'さん<br>';
+              echo'<label id="username" name="username"　value="'.$username.'">'.$username.'</label>さん<br>';
+              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
             }
             } catch (Exception $ex) {
               print('データの追加に失敗しました<br>');
@@ -110,7 +121,7 @@
             $stmt = $dsn->prepare($sql);
             $stmt->execute();
             while($task = $stmt->fetch(PDO::FETCH_ASSOC)) {
-              echo'<div class="log" style="float:left">'.$task['username'].'  '.date('Y年m月d日').'</div>';
+              echo'<div class="log" style="float:left">'.$task['username'].'  '.$task['sdate'].'</div>';
               echo'<form method="get" class="log" action="index.php" >';
               echo'<input type="image" class="log" src="./gomibako.png" alt="削除ボタン" width="20" height="20" name="delete" value="'.$task['id'].'"><br>';
               echo'<label class="log" style="float:left">'.$task['message'].'</label></br>';
