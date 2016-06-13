@@ -83,8 +83,14 @@
 
               $username = htmlspecialchars($username,ENT_QUOTES);
 
-                echo'<label id="'.$username.'" name="'.$username.'">'.$username.'<br>';
-              }
+              echo'<label id="'.$username.'" name="'.$username.'">'.$username.'さん<br>';
+            }else{
+              $username = "名無し";
+
+              $username = htmlspecialchars($username,ENT_QUOTES);
+
+              echo'<label id="'.$username.'" name="'.$username.'">'.$username.'さん<br>';
+            }
             } catch (Exception $ex) {
               print('データの追加に失敗しました<br>');
             }
