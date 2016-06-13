@@ -1,7 +1,14 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>ToDoList</title>
+        <title>掲示板</title>
+        <style>
+        .log{
+
+
+        }
+
+        </style>
     </head>
     <body>
 
@@ -17,15 +24,12 @@
         $password = '';
         try {
           $dsn = new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-            print('データの追加に成功しました<br>');
+
           //$dbn->query('SET NAMES utf8');
 
           $sql = 'INSERT INTO list (item) VALUES(:ToDoname)';
-            print('データの追加に成功しました<br>');
           $stmt = $dsn->prepare($sql);
-            print('データの追加に成功しました<br>');
           $stmt->bindParam(':ToDoname',$ToDoname);
-            print('データの追加に成功しました<br>');
           $stmt->execute();
 
           $dsn=NULL;
@@ -43,15 +47,11 @@
       $password = '';
       try {
         $dsn = new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-          print('データの追加に成功しました<br>');
         //$dbn->query('SET NAMES utf8');
 
         $sql = 'DELETE FROM  list WHERE id = :delete';
-          print('データの追加に成功しました!!<br>');
         $stmt = $dsn->prepare($sql);
-          print('データの追加に成功しました!!<br>');
         $stmt->bindParam(':delete',$deleteNo);
-          print('データの追加に成功しました!!<br>');
         $stmt->execute();
 
         $dsn=NULL;
@@ -63,6 +63,28 @@
 
         ?>
           <form  action="index.php" method="get">
+            <h2>掲示板</h2>
+            <div align="right">
+            <a href="" >ログアウト</a></br>
+            </div>
+            <?php
+            $dsn ='mysql:dbname=todolist;host=localhost;charset=utf8';
+            $user='root';
+            $password ='';
+            try {
+              $dsn= new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
+
+              //$dbn->query('SET NAMES utf8')
+              $sql = 'SELECT * FROM list';
+              $stmt = $dsn->prepare($sql);
+              $stmt->execute();
+              $task = $stmt->fetch(PDO::FETCH_ASSOC);
+                echo''.$task['id'].'<br>';
+            } catch (Exception $ex) {
+              print('データの追加に失敗しました<br>');
+            }
+            $dsn=NULL;
+            ?>
           <input type="text" id="ToDoname" name="ToDoname" style="float:left">
           <input type="submit" name="add" value="add"><br>
 
@@ -72,15 +94,18 @@
           $password ='';
           try {
             $dsn= new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-              print('データの追加に成功しました!!<br>');
+
             //$dbn->query('SET NAMES utf8')
             $sql = 'SELECT * FROM list';
             $stmt = $dsn->prepare($sql);
             $stmt->execute();
             while($task = $stmt->fetch(PDO::FETCH_ASSOC)) {
-              echo'<form method="get" action="index.php"><label style="float:left">'.$task['item'].'</label>';
-              echo'<input type="submit" id="'.$task['id'].'" name="delete" value="'.$task['id'].'"><br>';
-              echo'</form>';
+              echo'<div class="log" style="float:left">'.$task['id'].'  '.date('Y年m月d日').'</div>';
+              echo'<form method="get" class="log" action="index.php" >';
+              echo'<input type="image" class="log" src="./gomibako.png" alt="削除ボタン" width="20" height="20" name="delete" value="'.$task['id'].'"><br>';
+              echo'<label class="log" style="float:left">'.$task['item'].'</label></br>';
+              echo'</form></br>';
+
             }
           } catch (Exception $ex) {
             print('データの追加に失敗しました<br>');
