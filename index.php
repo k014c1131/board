@@ -3,11 +3,6 @@
     <head>
         <title>掲示板</title>
         <style>
-        .log{
-
-
-        }
-
         </style>
     </head>
     <body>
@@ -15,7 +10,6 @@
         <?php
         if(isset($_GET['message'])&&""!=$_GET['message']){//データ追加部分
           $message = $_GET['message'];
-
           $message = htmlspecialchars($message,ENT_QUOTES);
           if(isset($_GET['username'])&&""!=$_GET['username']){
           $username = $_GET['username'];
@@ -41,6 +35,10 @@
           $stmt->execute();
 
           $dsn=NULL;
+          header("Location: index.php");
+          exit();
+
+
         } catch (Exception $e) {
           print('データの追加に失敗しました<br>');
         }
@@ -108,7 +106,7 @@
             $dsn=NULL;
             ?>
           <input type="text" id="message" name="message" style="float:left">
-          <input type="submit" name="add" value="add"><br>
+          <input type="submit" ><br>
 
           <?php
           $dsn ='mysql:dbname=board;host=localhost;charset=utf8';//項目の表示
