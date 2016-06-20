@@ -1,4 +1,7 @@
 <!DOCTYPE HTML>
+<?php
+    session_start();
+?>
 <html>
     <head>
         <title>掲示板</title>
@@ -6,13 +9,48 @@
         </style>
     </head>
     <body>
-
+      <form  action="index.php" method="get">
+        <h2>掲示板</h2>
+        <div align="right">
+        <a href="login.php" >ログアウト</a></br>
+        </div>
         <?php
+        if((isset($_GET['username'])&&""!=$_GET['username'])||isset($_SESSION["username"])){
+          if(!isset($_SESSION["username"])){
+            $username = $_GET['username'];
+            $username = htmlspecialchars($username,ENT_QUOTES);
+            $_SESSION["username"] = $username;
+            echo'<label >'.$_SESSION["username"].'</label>さん<br>';
+          }else if(isset($_GET['username'])&&""!=$_GET['username']){
+            $username = $_GET['username'];
+            $username = htmlspecialchars($username,ENT_QUOTES);
+            $_SESSION["username"] = $username;
+            echo'<label >'.$_SESSION["username"].'</label>さん<br>';
+          }else{
+            echo'<label >'.$_SESSION["username"].'</label>さん<br>';
+          }
+      }else{
+        if(isset($_SESSION["username"])){
+          echo'<label >'.$_SESSION["username"].'</label>さん<br>';
+        }else {
+          $username = "名無し";
+
+          $username = htmlspecialchars($username,ENT_QUOTES);
+
+          echo'<label id="username" name="username"　value="'.$username.'">'.$username.'</label>さん<br>';
+          //echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
+        }
+
+      }
         if(isset($_GET['message'])&&""!=$_GET['message']){//データ追加部分
           $message = $_GET['message'];
           $message = htmlspecialchars($message,ENT_QUOTES);
           if(isset($_GET['username'])&&""!=$_GET['username']){
           $username = $_GET['username'];
+
+          $username = htmlspecialchars($username,ENT_QUOTES);
+        }else if (isset($_SESSION["username"])) {
+          $username = $_SESSION["username"];
 
           $username = htmlspecialchars($username,ENT_QUOTES);
         }else{
@@ -66,45 +104,7 @@
       }
       }
 
-
         ?>
-          <form  action="index.php" method="get">
-            <h2>掲示板</h2>
-            <div align="right">
-            <a href="login.php" >ログアウト</a></br>
-            </div>
-            <?php
-            $dsn ='mysql:dbname=board;host=localhost;charset=utf8';// ユーザー名表示
-            $user='root';
-            $password ='';
-
-            try {
-              $dsn= new PDO($dsn,$user,$password,array(PDO::ATTR_ERRMODE => false));
-
-              //$dbn->query('SET NAMES utf8')
-              $sql = 'SELECT * FROM list';
-              $stmt = $dsn->prepare($sql);
-              $stmt->execute();
-              if(isset($_GET['username'])&&""!=$_GET['username']){
-              $username = $_GET['username'];
-
-              $username = htmlspecialchars($username,ENT_QUOTES);
-
-              echo'<label >'.$username.'</label>さん<br>';
-              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
-            }else{
-              $username = "名無し";
-
-              $username = htmlspecialchars($username,ENT_QUOTES);
-
-              echo'<label id="username" name="username"　value="'.$username.'">'.$username.'</label>さん<br>';
-              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
-            }
-            } catch (Exception $ex) {
-              print('データの追加に失敗しました<br>');
-            }
-            $dsn=NULL;
-            ?>
           <input type="text" id="message" name="message" style="float:left">
           <input type="submit" ><br>
 
