@@ -11,7 +11,6 @@
         if(isset($_GET['message'])&&""!=$_GET['message']){//データ追加部分
           $message = $_GET['message'];
           $message = htmlspecialchars($message,ENT_QUOTES);
-          echo'<input type="hidden" name="messagelog" value="'.$message.'">';
           if(isset($_GET['username'])&&""!=$_GET['username']){
           $username = $_GET['username'];
 
@@ -39,7 +38,7 @@
           header("Location: index.php");
           exit();
 
-          
+
         } catch (Exception $e) {
           print('データの追加に失敗しました<br>');
         }
@@ -99,7 +98,7 @@
               $username = htmlspecialchars($username,ENT_QUOTES);
 
               echo'<label id="username" name="username"　value="'.$username.'">'.$username.'</label>さん<br>';
-
+              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
             }
             } catch (Exception $ex) {
               print('データの追加に失敗しました<br>');
