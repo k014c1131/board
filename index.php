@@ -3,11 +3,6 @@
     <head>
         <title>掲示板</title>
         <style>
-        .log{
-
-
-        }
-
         </style>
     </head>
     <body>
@@ -15,8 +10,8 @@
         <?php
         if(isset($_GET['message'])&&""!=$_GET['message']){//データ追加部分
           $message = $_GET['message'];
-
           $message = htmlspecialchars($message,ENT_QUOTES);
+          echo'<input type="hidden" name="messagelog" value="'.$message.'">';
           if(isset($_GET['username'])&&""!=$_GET['username']){
           $username = $_GET['username'];
 
@@ -41,6 +36,10 @@
           $stmt->execute();
 
           $dsn=NULL;
+          header("Location: index.php");
+          exit();
+
+          
         } catch (Exception $e) {
           print('データの追加に失敗しました<br>');
         }
@@ -100,7 +99,7 @@
               $username = htmlspecialchars($username,ENT_QUOTES);
 
               echo'<label id="username" name="username"　value="'.$username.'">'.$username.'</label>さん<br>';
-              echo'<input type="hidden" id="username" name="username" value="'.$username.'">';
+
             }
             } catch (Exception $ex) {
               print('データの追加に失敗しました<br>');
@@ -108,7 +107,7 @@
             $dsn=NULL;
             ?>
           <input type="text" id="message" name="message" style="float:left">
-          <input type="submit" name="add" value="add"><br>
+          <input type="submit" ><br>
 
           <?php
           $dsn ='mysql:dbname=board;host=localhost;charset=utf8';//項目の表示
